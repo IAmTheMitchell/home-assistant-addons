@@ -1,7 +1,7 @@
 name: "Renogy BT"
 description: "Home Assistant Addon to read Renogy Solar Charge Controllers and Smart Batteries using BT-1 or BT-2 type (RS232 or RS485) bluetooth modules."
 url: https://github.com/IAmTheMitchell/home-assistant-addons
-version: "0.0.8"
+version: "0.0.25"
 slug: "renogybt"
 init: false
 arch:

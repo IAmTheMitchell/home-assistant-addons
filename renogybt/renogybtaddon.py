@@ -1,5 +1,6 @@
 import logging
 import json
+from datetime import datetime
 from os import access, R_OK
 from os.path import isfile
 from typing import Dict
@@ -37,7 +38,7 @@ logger = logging.getLogger()
 addon_config: Dict[str, any] = load_user_config()
 
 # Test logging
-logger.info("Hello world from renogybtaddon.py")
+logger.info(f"Starting renogybtaddon.py - {datetime.now()}")
 logger.info(addon_config["mqtt"]["port"])
 
 # # Set logger level 
