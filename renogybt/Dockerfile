@@ -8,14 +8,14 @@ WORKDIR /app
 ENV PIP_BREAK_SYSTEM_PACKAGES=1
 
 # Copy data for add-on
-COPY run.sh /
-COPY renogybtaddon.py /
+COPY run.sh .
+COPY renogybtaddon.py .
 
 # Add Cyrils Renogy BT script
-ADD https://github.com/cyrils/renogy-bt/archive/refs/heads/bleak.zip /cyrils_renogy-bt.zip
-RUN unzip /cyrils_renogy-bt.zip -d /
-RUN mv /renogy-bt-bleak/renogybt /renogybt
-RUN rm /cyrils_renogy-bt.zip
+ADD https://github.com/cyrils/renogy-bt/archive/refs/heads/bleak.zip cyrils_renogy-bt.zip
+RUN unzip cyrils_renogy-bt.zip -d .
+RUN mv renogy-bt-bleak/renogybt /app/renogybt
+RUN rm cyrils_renogy-bt.zip
 
 # Install requirements for add-on
 RUN \
@@ -25,22 +25,11 @@ RUN \
     py-pip
 
 RUN python3 -m venv venv
-RUN venv/bin/pip3 install -r /renogy-bt-bleak/requirements.txt
+RUN venv/bin/pip3 install -r renogy-bt-bleak/requirements.txt
 RUN . venv/bin/activate
 
-# RUN \
-#     apt-get update \
-#     && apt-get install -y --no-install-recommends \
-#         python3 \
-#         python3-dev \
-#         python3-pip \
-#     \
-#     && pip3 install --no-cache-dir -r /cyrils_renogy-bt/requirements.txt \
-#     && apt-get purge -y --auto-remove \
-#         python3-dev 
+RUN rm -rf renogy-bt-bleak
 
-RUN rm -rf /renogy-bt-bleak
+RUN chmod a+x run.sh
 
-RUN chmod a+x /run.sh
-
-CMD [ "/run.sh" ]
+CMD [ "./run.sh" ]
