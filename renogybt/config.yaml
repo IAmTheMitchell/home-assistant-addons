@@ -1,7 +1,7 @@
 name: "Renogy BT"
 description: "Home Assistant Addon to read Renogy Solar Charge Controllers and Smart Batteries using BT-1 or BT-2 type (RS232 or RS485) bluetooth modules."
 url: https://github.com/IAmTheMitchell/home-assistant-addons
-version: "0.0.37"
+version: "0.0.40"
 slug: "renogybt"
 init: false
 arch:
@@ -19,14 +19,15 @@ discovery:
 
 options:
   device:
-    - adapter: hci0
-      mac_addr: 80:6f:b0:0f:xx:xx
-      alias: BT-TH-B00FXXXX
-      type: RNG_CTRL
-      device_id: 255
+    adapter: hci0
+    mac_addr: 80:6f:b0:0f:xx:xx
+    alias: BT-TH-B00FXXXX
+    type: RNG_CTRL
+    device_id: 255
   data:
     poll_interval: 60 # read data interval (seconds)
     temperature_unit: F # F = Fahrenheit, C = Celsius
+    fields: ""
   mqtt:
     enabled: false
     server: 192.168.0.16
@@ -34,21 +35,39 @@ options:
     topic: solar/state
     user: username
     password: password
+  remote_logging:
+    enabled: false
+    url: "https://example.com/post.php"
+    auth_header: "auth_header"
+  pvoutput:
+    enabled: false
+    api_key: ""
+    system_id: ""
+
 
 schema:
   device:
-    - adapter: "str"
-      mac_addr: "str"
-      alias: "str"
-      type: "str"
-      device_id: "int(1,65535)"
+    adapter: "str"
+    mac_addr: "str"
+    alias: "str"
+    type: "str"
+    device_id: "int(1,65535)"
   data:
-    poll_interval: "int(1,65535)" # read data interval (seconds)
+    poll_interval: "int(1,65535)?" # read data interval (seconds)
     temperature_unit: "str" # F = Fahrenheit, C = Celsius
+    fields: "str?"
   mqtt:
     enabled: "bool"
-    server: "str"
-    port: "int(1,65535)"
-    topic: "str"
-    user: "str"
-    password: "str"
+    server: "str?"
+    port: "int(1,65535)?"
+    topic: "str?"
+    user: "str?"
+    password: "str?"
+  remote_logging:
+    enabled: "bool"
+    url: "str?"
+    auth_header: "str?"
+  pvoutput:
+    enabled: "bool"
+    api_key: "str?"
+    system_id: "str?"
