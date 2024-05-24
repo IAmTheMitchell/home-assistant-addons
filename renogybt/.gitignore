@@ -164,4 +164,7 @@ cython_debug/
 
 # Project specific files
 renogy-bt-bleak/
+renogybt/
 data/
+options.json
+buildcommands.txt
