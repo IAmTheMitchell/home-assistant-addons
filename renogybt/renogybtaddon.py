@@ -1,5 +1,6 @@
 import logging
 import json
+import configparser
 from datetime import datetime
 from os import access, R_OK
 from os.path import isfile
@@ -35,46 +36,47 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
 
 # Load config
-addon_config: Dict[str, any] = load_user_config()
+json_config: Dict[str, any] = load_user_config()
 
 # Test logging
 logger.info(f"Starting renogybtaddon.py - {datetime.now()}")
-logger.info(addon_config["mqtt"]["port"])
 
 # Set logger level 
-data_logger: DataLogger = DataLogger(addon_config)
+data_logger: DataLogger = DataLogger(json_config)
 
 # Hard code certain values to config
-addon_config["data"]["enable_polling"] = False
-addon_config["data"]["fields"] = ""  # Leave empty to log all fields
-addon_config["remote_logging"]["enabled"] = False
-addon_config["remote_logging"]["url"] = "https://example.com/post.php"
-addon_config["remote_logging"]["auth_header"] = "auth_header"
-addon_config["pvoutput"]["enabled"] = False
-addon_config["pvoutput"]["api_key"] = ""
-addon_config["pvoutput"]["system_id"] = ""
+json_config["data"]["enable_polling"] = False
 
-# the callback func when you receive data
+# Convert json config object (cyrils/renogy-bt built to use configparser)
+configparser_config = configparser.ConfigParser()
+for section, options in json_config.items():
+    configparser_config.add_section(section)
+    for key, value in options.items():
+        configparser_config.set(section, key, str(value))
+
+# The callback function when data is received
 def on_data_received(client, data):
-    filtered_data = Utils.filter_fields(data, addon_config['data']['fields'])
-    logging.debug("{} => {}".format(client.device.alias(), filtered_data))
-    if addon_config['remote_logging'].getboolean('enabled'):
+    filtered_data = Utils.filter_fields(data, configparser_config['data']['fields'])
+    logging.info(f"{client.bleManager.device.name} => {filtered_data}")
+    if configparser_config['remote_logging'].getboolean('enabled'):
         data_logger.log_remote(json_data=filtered_data)
-    if addon_config['mqtt'].getboolean('enabled'):
+    if configparser_config['mqtt'].getboolean('enabled'):
         data_logger.log_mqtt(json_data=filtered_data)
-    if addon_config['pvoutput'].getboolean('enabled') and addon_config['device']['type'] == 'RNG_CTRL':
+    if configparser_config['pvoutput'].getboolean('enabled') and configparser_config['device']['type'] == 'RNG_CTRL':
         data_logger.log_pvoutput(json_data=filtered_data)
-    if not addon_config['data'].getboolean('enable_polling'):
-        client.disconnect()
+    if not configparser_config['data'].getboolean('enable_polling'):
+        client.stop()
 
-# start client
-if addon_config['device']['type'] == 'RNG_CTRL':
-    RoverClient(addon_config, on_data_received).connect()
-elif addon_config['device']['type'] == 'RNG_CTRL_HIST':
-    RoverHistoryClient(addon_config, on_data_received).connect()
-elif addon_config['device']['type'] == 'RNG_BATT':
-    BatteryClient(addon_config, on_data_received).connect()
-elif addon_config['device']['type'] == 'RNG_INVT':
-    InverterClient(addon_config, on_data_received).connect()
+# Start client
+# TODO: Convert to run with multiple devices
+# logger.info(f"Device type: {configparser_config["device"]["type"]}")
+if configparser_config['device']['type'] == 'RNG_CTRL':
+    RoverClient(configparser_config, on_data_received).start()
+elif configparser_config['device']['type'] == 'RNG_CTRL_HIST':
+    RoverHistoryClient(configparser_config, on_data_received).start()
+elif configparser_config['device']['type'] == 'RNG_BATT':
+    BatteryClient(configparser_config, on_data_received).start()
+elif configparser_config['device']['type'] == 'RNG_INVT':
+    InverterClient(configparser_config, on_data_received).start()
 else:
     logging.error("unknown device type")
