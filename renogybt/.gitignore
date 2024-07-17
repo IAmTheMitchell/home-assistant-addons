@@ -163,8 +163,6 @@ cython_debug/
 .DS_Store
 
 # Project specific files
-renogy-bt-bleak/
-renogybt/
 data/
 options.json
 buildcommands.txt
