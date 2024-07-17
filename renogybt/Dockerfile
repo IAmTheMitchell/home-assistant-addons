@@ -22,7 +22,7 @@ RUN \
   apk add --no-cache \
     python3 \
     python3-dev \
-    py-pip
+    py-pip 
 
 RUN python3 -m venv venv
 RUN venv/bin/pip3 install -r renogy-bt-bleak/requirements.txt
