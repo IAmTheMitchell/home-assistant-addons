@@ -4,6 +4,7 @@ url: https://github.com/IAmTheMitchell/home-assistant-addons
 version: "0.0.40"
 slug: "renogybt"
 init: false
+host_dbus: true
 arch:
   - aarch64
   - amd64
