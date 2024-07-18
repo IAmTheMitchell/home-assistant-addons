@@ -1,0 +1,4 @@
+bleak
+configparser
+requests
+paho-mqtt
