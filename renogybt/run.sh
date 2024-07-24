@@ -2,4 +2,4 @@
 
 . /app/venv/bin/activate
 
-python3 renogybtaddon.py
+python3 main.py

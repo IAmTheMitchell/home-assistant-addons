@@ -7,15 +7,20 @@ WORKDIR /app
 # Allow PIP to install packages outside venv
 ENV PIP_BREAK_SYSTEM_PACKAGES=1
 
-# Copy files for add-on
-COPY . .
-
 # Install requirements for add-on
 RUN \
   apk add --no-cache \
     python3 \
     python3-dev \
     py-pip 
+
+# Copy files for add-on
+COPY run.sh .
+
+# Add Cyrils Renogy BT script
+ADD https://github.com/IAmTheMitchell/renogy-bt/archive/refs/heads/main.zip renogy-bt-main.zip
+RUN unzip renogy-bt-main.zip -d .
+RUN mv renogy-bt-main/* /app
 
 RUN python3 -m venv venv
 RUN venv/bin/pip3 install -r requirements.txt
