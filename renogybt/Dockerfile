@@ -12,7 +12,8 @@ RUN \
   apk add --no-cache \
     python3 \
     python3-dev \
-    py-pip 
+    py-pip \
+    bluez 
 
 # Copy files for add-on
 COPY run.sh .
